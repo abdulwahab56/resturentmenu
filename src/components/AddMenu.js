@@ -1,8 +1,41 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import "../components/AddMenu.css";
 import { BsCloudUpload } from "react-icons/bs";
+import axios from "axios";
+import { menuContext } from "../App";
 
 const AddMenu = ({ close }) => {
+  const { menuList } = useContext(menuContext);
+  const [addMenu, setAddMenu] = useState({
+    title: "",
+    image: "",
+    description: "",
+    price: "",
+  });
+
+  function textAdd(e) {
+    setAddMenu({
+      ...addMenu,
+      [e.target.name]: e.target.value,
+    });
+    console.log(addMenu);
+  }
+  async function handelSubmit(e) {
+    // e.preventDefault();
+
+    async function getMenu() {
+      try {
+        if (menuList.find((la) => la.title === addMenu.title)) {
+          return alert("alredy have item");
+        }
+        await axios.post(`http://localhost:3333/menu`, addMenu);
+      } catch (error) {
+        console.log("something in wrong");
+      }
+    }
+    getMenu();
+  }
+
   return (
     <>
       <div
@@ -20,21 +53,37 @@ const AddMenu = ({ close }) => {
         >
           &times;
         </button>
-        <form class="upload">
+        <form class="upload" onSubmit={(e) => handelSubmit(e)}>
           <div class="upload__column">
             <h3 class="upload__heading">Recipe data</h3>
             <label>Title</label>
-            <input value="" required name="title" type="text" />
-            <label>URL</label>
-            <input value="" required name="sourceUrl" type="text" />
+            <input
+              required
+              name="title"
+              type="text"
+              onChange={(e) => textAdd(e)}
+            />
             <label>Image URL</label>
-            <input value="TEST23" required name="image" type="text" />
+            <input
+              required
+              name="image"
+              type="url"
+              onChange={(e) => textAdd(e)}
+            />
             <label>Description</label>
-            <input value="TEST23" required name="Description" type="text" />
+            <input
+              required
+              name="description"
+              type="text"
+              onChange={(e) => textAdd(e)}
+            />
             <label>Price</label>
-            <input value="23" required name="Price" type="number" />
-            <label>Servings</label>
-            <input value="" required name="servings" type="number" />
+            <input
+              required
+              name="price"
+              type="number"
+              onChange={(e) => textAdd(e)}
+            />
           </div>
 
           <button class="btn upload__btn">
